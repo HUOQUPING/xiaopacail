@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+       
+        .inp {
+            margin-top: 15px;
+            margin-left: 15px;
+        }
+
+        .box {
+            width: 400px;
+            height: 400px;
+            border: 1px solid red;
+            margin-left: 15px;
+            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .box .game {
+            position: absolute;
+            top: -400px;
+        }
+
+        .box .game .row div {
+            width: 98px;
+            height: 98px;
+            border: 1px solid gray;
+            float: left;
+        }
+
+        .black {
+            background-color: blueviolet;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="text" class="inp">
+    <div class="box">
+        <div class="game">
+            <div class="row">
+                <div class="black"></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <div class="row">
+                <div></div>
+                <div class="black"></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <div class="row">
+                <div></div>
+                <div></div>
+                <div class="black"></div>
+                <div></div>
+            </div>
+
+            <div class="row">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div class="black"></div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        window.onload = function () {
+            function $(cssSelector) {
+                var obj = document.querySelectorAll(cssSelector)
+                if (obj.length == 1) {
+                    return obj[0]
+                }
+                return obj
+            }
+            function getRandom(max, min) {
+                return Math.floor(Math.random() * (max - min) + min)
+
+            }
+            function Game() {
+                this.game = $(".game")
+                this.isGameOver = false
+                this.speed = 1
+                this.inp = $(".inp")
+                this.score = 0
+                this.timer = null
+            }
+            Game.prototype.slideDown = function () {
+                var that = this
+                // console.log(this.game);
+                // console.log(this.speed);
+                this.timer = setInterval(function () {
+                    that.game.style.top = that.speed + that.game.offsetTop + "px"
+                    if (that.game.offsetTop >= 0) {
+                        that.createRow()
+                        that.removeLast()
+                        that.isBottom()
+                    }
+                }, 20)
+
+            }
+            Game.prototype.init = function () {
+                this.slideDown()
+                this.clickBlack()
+            }
+            Game.prototype.createRow = function () {
+                var newRow = document.createElement("div")
+                newRow.className = "row"
+                var randomNum = getRandom(1, 5)
+
+                for (var i = 1; i <= 4; i++) {
+                    var newCol = document.createElement("div")
+                    if (randomNum == i) {
+                        newCol.className = "black"
+                    }
+                    newRow.appendChild(newCol)
+
+                }
+                this.game.insertBefore(newRow, this.game.firstElementChild)
+                this.game.style.top = "-100px"
+            }
+            Game.prototype.clickBlack = function () {
+                var that = this
+                this.game.onclick = function (e) {
+                    var e = e || window.event
+                    if (that.isGameOver) {
+                         alert("游戏结束")
+
+                    } else {
+                        if (e.target.className == "black") {
+                            e.target.className = ""
+                            e.target.parentNode.setAttribute("isclick", true)
+                            that.score++
+                            that.inp.value = that.score
+                            if (that.score % 5 == 0) {
+                                that.speed ++
+                            }
+
+                        } else {
+                            alert("你点击啦白块游戏结束");
+                            that.isGameOver = true
+                            clearInterval(that.timer)
+                        }
+                    }
+                }
+            }
+            // 黑块触底方法
+            Game.prototype.isBottom = function () {
+                if (this.game.lastElementChild.getAttribute("isclick") == null) {
+                    alert("碰底了")
+                    //  游戏结束把isGameOver=true
+                    this.isGameOver = true
+                    clearInterval(this.timer)
+                }
+            }
+            // 移除溢出去的一行
+            Game.prototype.removeLast = function () {
+                if (this.game.children.length > 5) {
+                    this.game.lastElementChild.remove()
+                }
+            }
+            var game = new Game()
+            game.init()
+            // game.slideDown()
+            // game.createRow()
+            // game.clickblack()
+        }
+
+        
+    </script>
+</body>
+</html>                                                   -+  
+                                                                 
