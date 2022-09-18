@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .text {
+            line-height: 40px;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+    </style>
+    <link rel="stylesheet" href="./bootstrap/css/bootstrap.css">
+
+</head>
+
+<body>
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/AllSchool.js"></script>
+    <script src="./bootstrap/js/bootstrap.min.js"></script>
+    <div class="container">
+        <div class="row">
+            <div class="col-2 text-center text-justify text">省份</div>
+            <div class="col-4">
+                <div class="input-group mb-3">
+                    <select class="custom-select cshi" id="inputGroupSelect01">
+                        <!-- <option selected></option>
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option> -->
+                    </select>
+                </div>
+            </div>
+            <div class="col-2 text-center text-justify text">城市</div>
+            <div class="col-4">
+                <div class="input-group mb-3">
+                    <select class="custom-select sf" id="inputGroupSelect01">
+                        <option selected></option>
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <div class="row">
+                        <th scope="col-4" class="col-4">时间</th>
+                        <th scope="col-2" class="col-2">温度</th>
+                        <th scope="col-2" class="col-2">天气</th>
+                        <th scope="col-2" class="col-2">风向</th>
+                        <th scope="col-2" class="col-2">风力</th>
+                    </div>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <div class="row">
+                        <td scope="col-4" class="col-4">时间</td>
+                        <td scope="col-2" class="col-2">温度</td>
+                        <td scope="col-2" class="col-2">天气</td>
+                        <td scope="col-2" class="col-2">风向</td>
+                        <td scope="col-2" class="col-2">风力</td>
+                    </div>
+                </tr>
+                <tr>
+                    <div class="row">
+                        <td scope="col-4" class="col-4">时间</td>
+                        <td scope="col-2" class="col-2">温度</td>
+                        <td scope="col-2" class="col-2">天气</td>
+                        <td scope="col-2" class="col-2">风向</td>
+                        <td scope="col-2" class="col-2">风力</td>
+                    </div>
+                </tr>
+                <tr>
+                    <div class="row">
+                        <td scope="col-4" class="col-4">时间</td>
+                        <td scope="col-2" class="col-2">温度</td>
+                        <td scope="col-2" class="col-2">天气</td>
+                        <td scope="col-2" class="col-2">风向</td>
+                        <td scope="col-2" class="col-2">风力</td>
+                    </div>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        var htmlcshi = ""
+        province.forEach(function (item) {
+            // console.log(item[1]);
+            htmlcshi += `<option value="${item[0]}">${item[1]}</option>
+           `
+        })
+        $(".cshi").html("<option selected>省份</option>" + htmlcshi);
+        // console.log($(":checked").attr("value"))
+        // console.log($("option").attr("checked"))
+        // console.log();
+        // $(".cshi>option").attr("value") == 01 &&
+        var csi
+        $(".cshi").on("change", function () {
+            var htmlsf = "";
+            // console.log($(":checked").attr("value"));
+            if ($(".cshi>option:checked")) {
+                var num = $(".cshi>option:checked").attr("value");
+                // console.log(city[28]);
+                // for (var attr in city.num) {
+                //     console.log(city.num[attr][0][1]);
+                //     htmlsf += `<option>${city[num][attr][1]}</option>`
+                // }
+                city[num].forEach(function (item) {
+                    htmlsf += `<option>${item[1]}</option>`
+
+                })
+                $(".sf").html("<option selected>城市</option>" + htmlsf)// forEach
+            }
+            csi = $(".cshi>option:checked").text();
+            // console.log($(".cshi>option:checked").text());
+
+
+            $(".sf").on("change", function () {
+                var htmlsf = "";
+                console.log($(":checked").attr("value"));
+                if ($(".sf>option:checked")) {
+                    var num = $(".sf>option:checked").attr("value");
+                }
+                sfen = $(".sf>option:checked").text();
+                // console.log($(".sf>option:checked").text());
+
+                $.ajax({
+                    url: "https://wis.qq.com/weather/common?source=pc",
+                    data: "weather_type=forecast_1h&province=" + csi + "&city=" + sfen,
+                    // contentType: "application/json",
+                    dataType: "jsonp",
+                    success: function (rest) {
+                        htmlStr = ""
+                        // console.log(rest.data.forecast_1h);
+                        for (attr in rest.data.forecast_1h) {
+                            htmlStr += `<tr>
+                    <div class="row">
+                        <td scope="col-4" class="col-4">${rest.data.forecast_1h[attr].update_time}</td>
+                        <td scope="col-2" class="col-2">${rest.data.forecast_1h[attr].degree}</td>
+                        <td scope="col-2" class="col-2">${rest.data.forecast_1h[attr].weather}</td>
+                        <td scope="col-2" class="col-2">${rest.data.forecast_1h[attr].wind_direction}</td>
+                        <td scope="col-2" class="col-2">${rest.data.forecast_1h[attr].wind_power}级</td>
+                    </div>
+                    </tr>`
+                        }
+                        if (htmlStr == "") {
+                            console.log(11);
+                            $("tbody").html("暂无数据")
+
+                        } else {
+                            $("tbody").html(htmlStr)
+                            // console.log(rest);
+                        }
+
+                    }
+                })
+
+            })
+        })
+        $.ajax({
+            url: "https://wis.qq.com/weather/common?source=pc",
+            data: "weather_type=forecast_1h&province=广东省&city=广州市",
+            // contentType: "application/json",
+            dataType: "jsonp",
+            success: function (rest) {
+                htmlStr = ""
+                // console.log(rest.data.forecast_1h);
+                for (attr in rest.data.forecast_1h) {
+                    htmlStr += `<tr>
+                    <div class="row">
+                        <td scope="col-4" class="col-4">${rest.data.forecast_1h[attr].update_time}</td>
+                        <td scope="col-2" class="col-2">${rest.data.forecast_1h[attr].degree}</td>
+                        <td scope="col-2" class="col-2">${rest.data.forecast_1h[attr].weather}</td>
+                        <td scope="col-2" class="col-2">${rest.data.forecast_1h[attr].wind_direction}</td>
+                        <td scope="col-2" class="col-2">${rest.data.forecast_1h[attr].wind_power}级</td>
+                    </div>
+                </tr>`
+                }
+                $("tbody").html(htmlStr)
+                // console.log(rest);
+            }
+        })
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>
